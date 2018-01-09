@@ -1,7 +1,7 @@
 version: 1.0.{build}
 image: Visual Studio 2017
 install:
-- cmd: copy "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\Common7\IDE\Extensions\TestPlatform\Extensions\appveyor.*" "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\TestAgent\Common7\IDE\Extensions\TestPlatform" /Y
+#- cmd: copy "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\Common7\IDE\Extensions\TestPlatform\Extensions\appveyor.*" "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\TestAgent\Common7\IDE\Extensions\TestPlatform" /Y
 before_build:
 - cmd: nuget restore -DisableParallelProcessing
 build:
@@ -9,7 +9,9 @@ build:
   verbosity: minimal
 test_script:
 - ps: >-
-    & 'C:\Program Files (x86)\Microsoft Visual Studio\2017\TestAgent\Common7\IDE\Extensions\TestPlatform\vstest.console.exe' /logger:Appveyor /Enablecodecoverage /settings:codecoverage.runsettings .\Tests\Tests\bin\Debug\Tests.dll .\Tests\Mvc.Tests\bin\Debug\Mvc.Tests.dll .\Tests\Owin.Tests\bin\Debug\Owin.Tests.dll .\Tests\HttpModule.Tests\bin\Debug\HttpModule.Tests.dll .\Tests\AspNetCore2.Tests\bin\Debug\AspNetCore2.Tests.dll
+    #& 'C:\Program Files (x86)\Microsoft Visual Studio\2017\TestAgent\Common7\IDE\Extensions\TestPlatform\vstest.console.exe' /logger:Appveyor /Enablecodecoverage /settings:codecoverage.runsettings .\Tests\Tests\bin\Debug\Tests.dll .\Tests\Mvc.Tests\bin\Debug\Mvc.Tests.dll .\Tests\Owin.Tests\bin\Debug\Owin.Tests.dll .\Tests\HttpModule.Tests\bin\Debug\HttpModule.Tests.dll .\Tests\AspNetCore2.Tests\bin\Debug\AspNetCore2.Tests.dll
+
+    & 'vstest.console.exe' /logger:Appveyor /Enablecodecoverage /settings:codecoverage.runsettings .\Tests\Tests\bin\Debug\Tests.dll .\Tests\Mvc.Tests\bin\Debug\Mvc.Tests.dll .\Tests\Owin.Tests\bin\Debug\Owin.Tests.dll .\Tests\HttpModule.Tests\bin\Debug\HttpModule.Tests.dll .\Tests\AspNetCore2.Tests\bin\Debug\AspNetCore2.Tests.dll
 
     $result = $LASTEXITCODE
 
