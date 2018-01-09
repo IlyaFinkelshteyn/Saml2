@@ -1,0 +1,32 @@
+version: 1.0.{build}
+image: Visual Studio 2017
+install:
+- cmd: copy "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\Common7\IDE\Extensions\TestPlatform\Extensions\appveyor.*" "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\TestAgent\Common7\IDE\Extensions\TestPlatform" /Y
+before_build:
+- cmd: nuget restore -DisableParallelProcessing
+build:
+  project: Sustainsys.Saml2.sln
+  verbosity: minimal
+test_script:
+- ps: >-
+    & 'C:\Program Files (x86)\Microsoft Visual Studio\2017\TestAgent\Common7\IDE\Extensions\TestPlatform\vstest.console.exe' /Enablecodecoverage /settings:codecoverage.runsettings .\Tests\Tests\bin\Debug\Tests.dll .\Tests\Mvc.Tests\bin\Debug\Mvc.Tests.dll .\Tests\Owin.Tests\bin\Debug\Owin.Tests.dll .\Tests\HttpModule.Tests\bin\Debug\HttpModule.Tests.dll .\Tests\AspNetCore2.Tests\bin\Debug\AspNetCore2.Tests.dll
+
+    $result = $LASTEXITCODE
+
+    #$blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
+    $coverageFilePath = Resolve-Path -path "TestResults\*\*.coverage"
+
+    $coverageFilePath = $coverageFilePath.ToString()
+
+    if(Test-Path .\coverage.coveragexml){ rm .\coverage.coveragexml }
+
+    & "C:\Program Files (x86)\Microsoft Visual Studio\2017\TestAgent\Team Tools\Dynamic Code Coverage Tools\CodeCoverage.exe" analyze /output:coverage.coveragexml "$coverageFilePath"
+
+    #$coveralls = "packages/coveralls.net.0.7.0-beta0001/tools/csmacnz.coveralls.exe"
+
+    #& $coveralls --dynamiccodecoverage -i coverage.coveragexml --useRelativePaths
+
+    if($result -ne 0){
+      exit $result
+    }
